@@ -1,0 +1,32 @@
+# Render deployment for the Marsh API (backend only).
+# Deploy this folder as a Node web service.
+
+services:
+  - type: web
+    name: marsh-api
+    runtime: node
+    plan: free
+    region: frankfurt          # change to your closest region
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false            # set in the Render dashboard (secret)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      # REQUIRED in production: the URL where your frontend is hosted, so CORS
+      # allows it. Comma-separate multiple origins if needed.
+      - key: CLIENT_ORIGIN
+        sync: false            # e.g. https://marsh-frontend.onrender.com
